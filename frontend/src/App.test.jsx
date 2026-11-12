@@ -1,0 +1,3 @@
+import {it,expect,vi,afterEach} from 'vitest';import {render,screen,cleanup,waitFor} from '@testing-library/react';import App from './App.jsx';
+afterEach(()=>{cleanup();vi.unstubAllGlobals()});
+it('renders restaurant results and labels sample data context',async()=>{vi.stubGlobal('fetch',vi.fn().mockResolvedValue({ok:true,json:async()=>({items:[{id:1,name:'Spice Garden',cuisine:'North Indian',city:'Bengaluru',address:'12 MG Road',description:'Sharing plates',priceLevel:2,averageRating:4.5}]})}));render(<App/>);expect(await screen.findByText('Spice Garden')).toBeTruthy();expect(screen.getByText(/sample places/)).toBeTruthy();expect(screen.getByText(/sample data/)).toBeTruthy()});
