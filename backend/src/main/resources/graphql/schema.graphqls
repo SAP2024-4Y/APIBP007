@@ -1,0 +1,16 @@
+type Query {
+  restaurants(city: String, cuisine: String, first: Int = 10, after: String): RestaurantConnection!
+  restaurant(id: ID!): Restaurant
+}
+type Mutation { createReservation(slotId: ID!, guestName: String!, guestEmail: String!, partySize: Int!, specialRequest: String): Reservation! }
+type RestaurantConnection { edges: [RestaurantEdge!]!, pageInfo: PageInfo! }
+type RestaurantEdge { cursor: String!, node: Restaurant! }
+type PageInfo { hasNextPage: Boolean!, endCursor: String }
+type Restaurant {
+  id: ID!, name: String!, cuisine: String!, city: String!, address: String!, averageRating: Float!, priceLevel: Int!
+  menuItems: [MenuItem!]!
+  """Old field retained for clients migrating from menuItems."""
+  menu: [MenuItem!]! @deprecated(reason: "Use menuItems")
+}
+type MenuItem { id: ID!, name: String!, category: String, price: Float!, vegetarian: Boolean! }
+type Reservation { id: ID!, status: String!, partySize: Int! }
