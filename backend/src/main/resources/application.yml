@@ -1,0 +1,28 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/table4us}
+    username: ${SPRING_DATASOURCE_USERNAME:table4us}
+    password: ${SPRING_DATASOURCE_PASSWORD:table4us_local_password}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+  graphql:
+    graphiql:
+      enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
+# Set JWT_SECRET in your environment for non-local use.
