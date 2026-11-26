@@ -1,0 +1,1839 @@
+openapi: 3.0.3
+info:
+  title: DineIndia
+  version: 1.0.0
+  description: DineIndia reservation API. Obtain a JWT from Authentication, then click
+    Authorize and paste the token without the Bearer prefix. Public reads require
+    no token. Admin manages restaurants and slots; customers manage their own bookings.
+paths:
+  /health:
+    get:
+      summary: Health
+      operationId: get_health
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: &id001
+                    type: string
+                required:
+                - status
+        '400':
+          description: BAD_INPUT, INVALID_CURSOR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                BAD_INPUT:
+                  value:
+                    code: BAD_INPUT
+                    message: Bad Input
+                INVALID_CURSOR:
+                  value:
+                    code: INVALID_CURSOR
+                    message: Invalid Cursor
+        '401':
+          description: UNAUTHENTICATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                UNAUTHENTICATED:
+                  value:
+                    code: UNAUTHENTICATED
+                    message: Unauthenticated
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                FORBIDDEN:
+                  value:
+                    code: FORBIDDEN
+                    message: Forbidden
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                NOT_FOUND:
+                  value:
+                    code: NOT_FOUND
+                    message: Not Found
+        '409':
+          description: CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                CONFLICT:
+                  value:
+                    code: CONFLICT
+                    message: Conflict
+        '422':
+          description: INVALID_WINDOW, INVALID_LOCATION, INVALID_PRICE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INVALID_WINDOW:
+                  value:
+                    code: INVALID_WINDOW
+                    message: Invalid Window
+                INVALID_LOCATION:
+                  value:
+                    code: INVALID_LOCATION
+                    message: Invalid Location
+                INVALID_PRICE:
+                  value:
+                    code: INVALID_PRICE
+                    message: Invalid Price
+        '429':
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                RATE_LIMITED:
+                  value:
+                    code: RATE_LIMITED
+                    message: Rate Limited
+        '500':
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INTERNAL_ERROR:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: Internal Error
+      tags:
+      - Health
+  /api/v1/auth/token:
+    post:
+      summary: Token
+      operationId: post_api_v1_auth_token
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: *id001
+                  token_type:
+                    type: string
+                    example: Bearer
+                  expires_in:
+                    type: integer
+                    example: 3600
+                required:
+                - token
+        '400':
+          description: BAD_INPUT, INVALID_CURSOR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                BAD_INPUT:
+                  value:
+                    code: BAD_INPUT
+                    message: Bad Input
+                INVALID_CURSOR:
+                  value:
+                    code: INVALID_CURSOR
+                    message: Invalid Cursor
+        '401':
+          description: UNAUTHENTICATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                UNAUTHENTICATED:
+                  value:
+                    code: UNAUTHENTICATED
+                    message: Unauthenticated
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                FORBIDDEN:
+                  value:
+                    code: FORBIDDEN
+                    message: Forbidden
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                NOT_FOUND:
+                  value:
+                    code: NOT_FOUND
+                    message: Not Found
+        '409':
+          description: CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                CONFLICT:
+                  value:
+                    code: CONFLICT
+                    message: Conflict
+        '422':
+          description: INVALID_WINDOW, INVALID_LOCATION, INVALID_PRICE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INVALID_WINDOW:
+                  value:
+                    code: INVALID_WINDOW
+                    message: Invalid Window
+                INVALID_LOCATION:
+                  value:
+                    code: INVALID_LOCATION
+                    message: Invalid Location
+                INVALID_PRICE:
+                  value:
+                    code: INVALID_PRICE
+                    message: Invalid Price
+        '429':
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                RATE_LIMITED:
+                  value:
+                    code: RATE_LIMITED
+                    message: Rate Limited
+        '500':
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INTERNAL_ERROR:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: Internal Error
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username: *id001
+                password: *id001
+              required:
+              - username
+              - password
+            examples:
+              Customer:
+                value:
+                  username: demo
+                  password: demo-password
+              Admin:
+                value:
+                  username: admin
+                  password: admin-password
+      tags:
+      - Authentication
+  /api/v1/restaurants:
+    get:
+      summary: Restaurants
+      operationId: get_api_v1_restaurants
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/List'
+        '400':
+          description: BAD_INPUT, INVALID_CURSOR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                BAD_INPUT:
+                  value:
+                    code: BAD_INPUT
+                    message: Bad Input
+                INVALID_CURSOR:
+                  value:
+                    code: INVALID_CURSOR
+                    message: Invalid Cursor
+        '401':
+          description: UNAUTHENTICATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                UNAUTHENTICATED:
+                  value:
+                    code: UNAUTHENTICATED
+                    message: Unauthenticated
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                FORBIDDEN:
+                  value:
+                    code: FORBIDDEN
+                    message: Forbidden
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                NOT_FOUND:
+                  value:
+                    code: NOT_FOUND
+                    message: Not Found
+        '409':
+          description: CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                CONFLICT:
+                  value:
+                    code: CONFLICT
+                    message: Conflict
+        '422':
+          description: INVALID_WINDOW, INVALID_LOCATION, INVALID_PRICE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INVALID_WINDOW:
+                  value:
+                    code: INVALID_WINDOW
+                    message: Invalid Window
+                INVALID_LOCATION:
+                  value:
+                    code: INVALID_LOCATION
+                    message: Invalid Location
+                INVALID_PRICE:
+                  value:
+                    code: INVALID_PRICE
+                    message: Invalid Price
+        '429':
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                RATE_LIMITED:
+                  value:
+                    code: RATE_LIMITED
+                    message: Rate Limited
+        '500':
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INTERNAL_ERROR:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: Internal Error
+      parameters:
+      - name: status
+        in: query
+        schema: *id001
+      - name: category
+        in: query
+        schema: *id001
+      - name: min_price
+        in: query
+        schema: &id002
+          type: number
+      - name: max_price
+        in: query
+        schema: *id002
+      - name: sort
+        in: query
+        schema: *id001
+      - name: order
+        in: query
+        schema: *id001
+      - name: limit
+        in: query
+        schema: &id004
+          type: integer
+      - name: after
+        in: query
+        schema: *id001
+      - name: city
+        in: query
+        schema: &id003
+          type: string
+      tags:
+      - Restaurants
+    post:
+      summary: 'Admin: add restaurant'
+      operationId: post__api_v1_restaurants
+      responses:
+        '400':
+          description: BAD_INPUT, INVALID_CURSOR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                BAD_INPUT:
+                  value:
+                    code: BAD_INPUT
+                    message: Bad Input
+                INVALID_CURSOR:
+                  value:
+                    code: INVALID_CURSOR
+                    message: Invalid Cursor
+        '401':
+          description: UNAUTHENTICATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                UNAUTHENTICATED:
+                  value:
+                    code: UNAUTHENTICATED
+                    message: Unauthenticated
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                FORBIDDEN:
+                  value:
+                    code: FORBIDDEN
+                    message: Forbidden
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                NOT_FOUND:
+                  value:
+                    code: NOT_FOUND
+                    message: Not Found
+        '409':
+          description: CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                CONFLICT:
+                  value:
+                    code: CONFLICT
+                    message: Conflict
+        '422':
+          description: INVALID_WINDOW, INVALID_LOCATION, INVALID_PRICE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INVALID_WINDOW:
+                  value:
+                    code: INVALID_WINDOW
+                    message: Invalid Window
+                INVALID_LOCATION:
+                  value:
+                    code: INVALID_LOCATION
+                    message: Invalid Location
+                INVALID_PRICE:
+                  value:
+                    code: INVALID_PRICE
+                    message: Invalid Price
+        '429':
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                RATE_LIMITED:
+                  value:
+                    code: RATE_LIMITED
+                    message: Rate Limited
+        '500':
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INTERNAL_ERROR:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: Internal Error
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  created:
+                    $ref: '#/components/schemas/Restaurant'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: &id007
+                name: *id003
+                city: *id003
+                category: *id003
+                status: *id003
+                price: &id006
+                  type: integer
+                latitude:
+                  type: number
+                longitude:
+                  type: number
+              required:
+              - name
+              - city
+              - category
+              - price
+              - latitude
+              - longitude
+            example:
+              name: Demo Kitchen
+              city: Chennai
+              category: South Indian
+              status: OPEN
+              price: 500
+              latitude: 13.08
+              longitude: 80.27
+      security: &id005
+      - bearerAuth: []
+      tags:
+      - Admin Restaurant Management
+      description: 'Requires admin JWT. Missing or invalid token: 401; wrong role:
+        403.'
+  /api/v1/restaurants/map:
+    get:
+      summary: Map
+      operationId: get_api_v1_restaurants_map
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Restaurant'
+        '400':
+          description: BAD_INPUT, INVALID_CURSOR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                BAD_INPUT:
+                  value:
+                    code: BAD_INPUT
+                    message: Bad Input
+                INVALID_CURSOR:
+                  value:
+                    code: INVALID_CURSOR
+                    message: Invalid Cursor
+        '401':
+          description: UNAUTHENTICATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                UNAUTHENTICATED:
+                  value:
+                    code: UNAUTHENTICATED
+                    message: Unauthenticated
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                FORBIDDEN:
+                  value:
+                    code: FORBIDDEN
+                    message: Forbidden
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                NOT_FOUND:
+                  value:
+                    code: NOT_FOUND
+                    message: Not Found
+        '409':
+          description: CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                CONFLICT:
+                  value:
+                    code: CONFLICT
+                    message: Conflict
+        '422':
+          description: INVALID_WINDOW, INVALID_LOCATION, INVALID_PRICE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INVALID_WINDOW:
+                  value:
+                    code: INVALID_WINDOW
+                    message: Invalid Window
+                INVALID_LOCATION:
+                  value:
+                    code: INVALID_LOCATION
+                    message: Invalid Location
+                INVALID_PRICE:
+                  value:
+                    code: INVALID_PRICE
+                    message: Invalid Price
+        '429':
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                RATE_LIMITED:
+                  value:
+                    code: RATE_LIMITED
+                    message: Rate Limited
+        '500':
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INTERNAL_ERROR:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: Internal Error
+      parameters:
+      - name: latitude
+        in: query
+        schema: *id002
+      - name: longitude
+        in: query
+        schema: *id002
+      - name: radius_km
+        in: query
+        schema: *id002
+      - name: min_lat
+        in: query
+        schema: *id002
+      - name: min_lon
+        in: query
+        schema: *id002
+      - name: max_lat
+        in: query
+        schema: *id002
+      - name: max_lon
+        in: query
+        schema: *id002
+      tags:
+      - Map Search
+  /api/v1/calendar:
+    get:
+      summary: Calendar
+      operationId: get_api_v1_calendar
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Slot'
+        '400':
+          description: BAD_INPUT, INVALID_CURSOR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                BAD_INPUT:
+                  value:
+                    code: BAD_INPUT
+                    message: Bad Input
+                INVALID_CURSOR:
+                  value:
+                    code: INVALID_CURSOR
+                    message: Invalid Cursor
+        '401':
+          description: UNAUTHENTICATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                UNAUTHENTICATED:
+                  value:
+                    code: UNAUTHENTICATED
+                    message: Unauthenticated
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                FORBIDDEN:
+                  value:
+                    code: FORBIDDEN
+                    message: Forbidden
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                NOT_FOUND:
+                  value:
+                    code: NOT_FOUND
+                    message: Not Found
+        '409':
+          description: CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                CONFLICT:
+                  value:
+                    code: CONFLICT
+                    message: Conflict
+        '422':
+          description: INVALID_WINDOW, INVALID_LOCATION, INVALID_PRICE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INVALID_WINDOW:
+                  value:
+                    code: INVALID_WINDOW
+                    message: Invalid Window
+                INVALID_LOCATION:
+                  value:
+                    code: INVALID_LOCATION
+                    message: Invalid Location
+                INVALID_PRICE:
+                  value:
+                    code: INVALID_PRICE
+                    message: Invalid Price
+        '429':
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                RATE_LIMITED:
+                  value:
+                    code: RATE_LIMITED
+                    message: Rate Limited
+        '500':
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INTERNAL_ERROR:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: Internal Error
+      parameters:
+      - name: starts_at
+        in: query
+        schema: *id001
+      - name: ends_at
+        in: query
+        schema: *id001
+      - name: restaurant_id
+        in: query
+        schema: *id004
+      tags:
+      - Calendar & Slots
+  /api/v1/bookings:
+    post:
+      summary: Bookings
+      operationId: post_api_v1_bookings
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  created:
+                    $ref: '#/components/schemas/Booking'
+                required:
+                - created
+        '400':
+          description: BAD_INPUT, INVALID_CURSOR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                BAD_INPUT:
+                  value:
+                    code: BAD_INPUT
+                    message: Bad Input
+                INVALID_CURSOR:
+                  value:
+                    code: INVALID_CURSOR
+                    message: Invalid Cursor
+        '401':
+          description: UNAUTHENTICATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                UNAUTHENTICATED:
+                  value:
+                    code: UNAUTHENTICATED
+                    message: Unauthenticated
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                FORBIDDEN:
+                  value:
+                    code: FORBIDDEN
+                    message: Forbidden
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                NOT_FOUND:
+                  value:
+                    code: NOT_FOUND
+                    message: Not Found
+        '409':
+          description: CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                CONFLICT:
+                  value:
+                    code: CONFLICT
+                    message: Conflict
+        '422':
+          description: INVALID_WINDOW, INVALID_LOCATION, INVALID_PRICE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INVALID_WINDOW:
+                  value:
+                    code: INVALID_WINDOW
+                    message: Invalid Window
+                INVALID_LOCATION:
+                  value:
+                    code: INVALID_LOCATION
+                    message: Invalid Location
+                INVALID_PRICE:
+                  value:
+                    code: INVALID_PRICE
+                    message: Invalid Price
+        '429':
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                RATE_LIMITED:
+                  value:
+                    code: RATE_LIMITED
+                    message: Rate Limited
+        '500':
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INTERNAL_ERROR:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: Internal Error
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                slot_id: *id004
+              required:
+              - slot_id
+            example:
+              slot_id: 1
+      security: *id005
+      tags:
+      - Bookings
+      description: 'Requires customer JWT. Missing or invalid token: 401; wrong role:
+        403.'
+    get:
+      summary: 'Customer: own bookings'
+      operationId: get__api_v1_bookings
+      responses:
+        '400':
+          description: BAD_INPUT, INVALID_CURSOR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                BAD_INPUT:
+                  value:
+                    code: BAD_INPUT
+                    message: Bad Input
+                INVALID_CURSOR:
+                  value:
+                    code: INVALID_CURSOR
+                    message: Invalid Cursor
+        '401':
+          description: UNAUTHENTICATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                UNAUTHENTICATED:
+                  value:
+                    code: UNAUTHENTICATED
+                    message: Unauthenticated
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                FORBIDDEN:
+                  value:
+                    code: FORBIDDEN
+                    message: Forbidden
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                NOT_FOUND:
+                  value:
+                    code: NOT_FOUND
+                    message: Not Found
+        '409':
+          description: CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                CONFLICT:
+                  value:
+                    code: CONFLICT
+                    message: Conflict
+        '422':
+          description: INVALID_WINDOW, INVALID_LOCATION, INVALID_PRICE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INVALID_WINDOW:
+                  value:
+                    code: INVALID_WINDOW
+                    message: Invalid Window
+                INVALID_LOCATION:
+                  value:
+                    code: INVALID_LOCATION
+                    message: Invalid Location
+                INVALID_PRICE:
+                  value:
+                    code: INVALID_PRICE
+                    message: Invalid Price
+        '429':
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                RATE_LIMITED:
+                  value:
+                    code: RATE_LIMITED
+                    message: Rate Limited
+        '500':
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INTERNAL_ERROR:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: Internal Error
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Booking'
+      security: *id005
+      tags:
+      - Bookings
+      description: 'Requires customer JWT. Missing or invalid token: 401; wrong role:
+        403.'
+  /api/v1/restaurants/{id}:
+    get:
+      summary: Restaurant details
+      operationId: get__api_v1_restaurants_id
+      responses:
+        '400':
+          description: BAD_INPUT, INVALID_CURSOR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                BAD_INPUT:
+                  value:
+                    code: BAD_INPUT
+                    message: Bad Input
+                INVALID_CURSOR:
+                  value:
+                    code: INVALID_CURSOR
+                    message: Invalid Cursor
+        '401':
+          description: UNAUTHENTICATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                UNAUTHENTICATED:
+                  value:
+                    code: UNAUTHENTICATED
+                    message: Unauthenticated
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                FORBIDDEN:
+                  value:
+                    code: FORBIDDEN
+                    message: Forbidden
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                NOT_FOUND:
+                  value:
+                    code: NOT_FOUND
+                    message: Not Found
+        '409':
+          description: CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                CONFLICT:
+                  value:
+                    code: CONFLICT
+                    message: Conflict
+        '422':
+          description: INVALID_WINDOW, INVALID_LOCATION, INVALID_PRICE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INVALID_WINDOW:
+                  value:
+                    code: INVALID_WINDOW
+                    message: Invalid Window
+                INVALID_LOCATION:
+                  value:
+                    code: INVALID_LOCATION
+                    message: Invalid Location
+                INVALID_PRICE:
+                  value:
+                    code: INVALID_PRICE
+                    message: Invalid Price
+        '429':
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                RATE_LIMITED:
+                  value:
+                    code: RATE_LIMITED
+                    message: Rate Limited
+        '500':
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INTERNAL_ERROR:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: Internal Error
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restaurant'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema: *id006
+      tags:
+      - Restaurants
+    patch:
+      summary: 'Admin: update restaurant'
+      operationId: patch__api_v1_restaurants_id
+      responses:
+        '400':
+          description: BAD_INPUT, INVALID_CURSOR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                BAD_INPUT:
+                  value:
+                    code: BAD_INPUT
+                    message: Bad Input
+                INVALID_CURSOR:
+                  value:
+                    code: INVALID_CURSOR
+                    message: Invalid Cursor
+        '401':
+          description: UNAUTHENTICATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                UNAUTHENTICATED:
+                  value:
+                    code: UNAUTHENTICATED
+                    message: Unauthenticated
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                FORBIDDEN:
+                  value:
+                    code: FORBIDDEN
+                    message: Forbidden
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                NOT_FOUND:
+                  value:
+                    code: NOT_FOUND
+                    message: Not Found
+        '409':
+          description: CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                CONFLICT:
+                  value:
+                    code: CONFLICT
+                    message: Conflict
+        '422':
+          description: INVALID_WINDOW, INVALID_LOCATION, INVALID_PRICE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INVALID_WINDOW:
+                  value:
+                    code: INVALID_WINDOW
+                    message: Invalid Window
+                INVALID_LOCATION:
+                  value:
+                    code: INVALID_LOCATION
+                    message: Invalid Location
+                INVALID_PRICE:
+                  value:
+                    code: INVALID_PRICE
+                    message: Invalid Price
+        '429':
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                RATE_LIMITED:
+                  value:
+                    code: RATE_LIMITED
+                    message: Rate Limited
+        '500':
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INTERNAL_ERROR:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: Internal Error
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  updated:
+                    $ref: '#/components/schemas/Restaurant'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: *id007
+            example:
+              price: 600
+      security: *id005
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema: *id006
+      tags:
+      - Admin Restaurant Management
+      description: 'Requires admin JWT. Missing or invalid token: 401; wrong role:
+        403.'
+    delete:
+      summary: 'Admin: delete restaurant'
+      operationId: delete__api_v1_restaurants_id
+      responses:
+        '400':
+          description: BAD_INPUT, INVALID_CURSOR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                BAD_INPUT:
+                  value:
+                    code: BAD_INPUT
+                    message: Bad Input
+                INVALID_CURSOR:
+                  value:
+                    code: INVALID_CURSOR
+                    message: Invalid Cursor
+        '401':
+          description: UNAUTHENTICATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                UNAUTHENTICATED:
+                  value:
+                    code: UNAUTHENTICATED
+                    message: Unauthenticated
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                FORBIDDEN:
+                  value:
+                    code: FORBIDDEN
+                    message: Forbidden
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                NOT_FOUND:
+                  value:
+                    code: NOT_FOUND
+                    message: Not Found
+        '409':
+          description: CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                CONFLICT:
+                  value:
+                    code: CONFLICT
+                    message: Conflict
+        '422':
+          description: INVALID_WINDOW, INVALID_LOCATION, INVALID_PRICE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INVALID_WINDOW:
+                  value:
+                    code: INVALID_WINDOW
+                    message: Invalid Window
+                INVALID_LOCATION:
+                  value:
+                    code: INVALID_LOCATION
+                    message: Invalid Location
+                INVALID_PRICE:
+                  value:
+                    code: INVALID_PRICE
+                    message: Invalid Price
+        '429':
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                RATE_LIMITED:
+                  value:
+                    code: RATE_LIMITED
+                    message: Rate Limited
+        '500':
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INTERNAL_ERROR:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: Internal Error
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: *id006
+      security: *id005
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema: *id006
+      tags:
+      - Admin Restaurant Management
+      description: 'Requires admin JWT. Missing or invalid token: 401; wrong role:
+        403.'
+  /api/v1/slots:
+    post:
+      summary: 'Admin: create slot'
+      operationId: post__api_v1_slots
+      responses:
+        '400':
+          description: BAD_INPUT, INVALID_CURSOR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                BAD_INPUT:
+                  value:
+                    code: BAD_INPUT
+                    message: Bad Input
+                INVALID_CURSOR:
+                  value:
+                    code: INVALID_CURSOR
+                    message: Invalid Cursor
+        '401':
+          description: UNAUTHENTICATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                UNAUTHENTICATED:
+                  value:
+                    code: UNAUTHENTICATED
+                    message: Unauthenticated
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                FORBIDDEN:
+                  value:
+                    code: FORBIDDEN
+                    message: Forbidden
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                NOT_FOUND:
+                  value:
+                    code: NOT_FOUND
+                    message: Not Found
+        '409':
+          description: CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                CONFLICT:
+                  value:
+                    code: CONFLICT
+                    message: Conflict
+        '422':
+          description: INVALID_WINDOW, INVALID_LOCATION, INVALID_PRICE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INVALID_WINDOW:
+                  value:
+                    code: INVALID_WINDOW
+                    message: Invalid Window
+                INVALID_LOCATION:
+                  value:
+                    code: INVALID_LOCATION
+                    message: Invalid Location
+                INVALID_PRICE:
+                  value:
+                    code: INVALID_PRICE
+                    message: Invalid Price
+        '429':
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                RATE_LIMITED:
+                  value:
+                    code: RATE_LIMITED
+                    message: Rate Limited
+        '500':
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INTERNAL_ERROR:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: Internal Error
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  created:
+                    $ref: '#/components/schemas/Slot'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                restaurant_id: *id006
+                starts_at: *id003
+                ends_at: *id003
+              required:
+              - restaurant_id
+              - starts_at
+              - ends_at
+            example:
+              restaurant_id: 51
+              starts_at: '2026-12-01T12:00:00Z'
+              ends_at: '2026-12-01T13:00:00Z'
+      security: *id005
+      tags:
+      - Calendar & Slots
+      description: 'Requires admin JWT. Missing or invalid token: 401; wrong role:
+        403.'
+  /api/v1/bookings/{id}:
+    delete:
+      summary: 'Customer: cancel booking'
+      operationId: delete__api_v1_bookings_id
+      responses:
+        '400':
+          description: BAD_INPUT, INVALID_CURSOR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                BAD_INPUT:
+                  value:
+                    code: BAD_INPUT
+                    message: Bad Input
+                INVALID_CURSOR:
+                  value:
+                    code: INVALID_CURSOR
+                    message: Invalid Cursor
+        '401':
+          description: UNAUTHENTICATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                UNAUTHENTICATED:
+                  value:
+                    code: UNAUTHENTICATED
+                    message: Unauthenticated
+        '403':
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                FORBIDDEN:
+                  value:
+                    code: FORBIDDEN
+                    message: Forbidden
+        '404':
+          description: NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                NOT_FOUND:
+                  value:
+                    code: NOT_FOUND
+                    message: Not Found
+        '409':
+          description: CONFLICT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                CONFLICT:
+                  value:
+                    code: CONFLICT
+                    message: Conflict
+        '422':
+          description: INVALID_WINDOW, INVALID_LOCATION, INVALID_PRICE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INVALID_WINDOW:
+                  value:
+                    code: INVALID_WINDOW
+                    message: Invalid Window
+                INVALID_LOCATION:
+                  value:
+                    code: INVALID_LOCATION
+                    message: Invalid Location
+                INVALID_PRICE:
+                  value:
+                    code: INVALID_PRICE
+                    message: Invalid Price
+        '429':
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                RATE_LIMITED:
+                  value:
+                    code: RATE_LIMITED
+                    message: Rate Limited
+        '500':
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INTERNAL_ERROR:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: Internal Error
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: *id006
+      security: *id005
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema: *id006
+      tags:
+      - Bookings
+      description: 'Requires customer JWT. Missing or invalid token: 401; wrong role:
+        403.'
+components:
+  schemas:
+    Restaurant:
+      type: object
+      properties:
+        id: *id004
+        name: *id001
+        city: *id001
+        category: *id001
+        status: *id001
+        price: *id004
+        latitude: *id002
+        longitude: *id002
+        location:
+          type: object
+          properties:
+            type: *id001
+            coordinates:
+              type: array
+              items: *id002
+          required:
+          - type
+          - coordinates
+      required:
+      - id
+      - name
+      - city
+      - category
+      - status
+      - price
+      - latitude
+      - longitude
+      - location
+    Slot:
+      type: object
+      properties:
+        id: *id004
+        restaurant_id: *id004
+        starts_at: *id001
+        ends_at: *id001
+        available: &id008
+          type: boolean
+      required:
+      - id
+      - restaurant_id
+      - starts_at
+      - ends_at
+      - available
+    Booking:
+      type: object
+      properties:
+        id: *id004
+        slot_id: *id004
+        username: *id001
+      required:
+      - id
+      - slot_id
+      - username
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          enum:
+          - BAD_INPUT
+          - UNAUTHENTICATED
+          - FORBIDDEN
+          - NOT_FOUND
+          - CONFLICT
+          - INVALID_WINDOW
+          - INVALID_CURSOR
+          - INVALID_LOCATION
+          - INVALID_PRICE
+          - RATE_LIMITED
+          - INTERNAL_ERROR
+        message: *id001
+      required:
+      - code
+      - message
+    List:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Restaurant'
+        edges:
+          type: array
+          items:
+            type: object
+            properties:
+              node:
+                $ref: '#/components/schemas/Restaurant'
+              cursor: *id001
+            required:
+            - node
+            - cursor
+        has_more: *id008
+        after:
+          type: string
+          nullable: true
+        pageInfo:
+          type: object
+          properties:
+            hasNextPage: *id008
+            endCursor:
+              type: string
+              nullable: true
+          required:
+          - hasNextPage
+          - endCursor
+      required:
+      - items
+      - edges
+      - has_more
+      - after
+      - pageInfo
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+tags:
+- name: Health
+- name: Authentication
+- name: Restaurants
+- name: Map Search
+- name: Calendar & Slots
+- name: Bookings
+- name: Admin Restaurant Management
