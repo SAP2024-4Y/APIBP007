@@ -1,0 +1,22 @@
+enum ErrorCode { BAD_INPUT UNAUTHENTICATED FORBIDDEN NOT_FOUND CONFLICT INVALID_WINDOW INVALID_CURSOR INVALID_LOCATION INVALID_PRICE RATE_LIMITED INTERNAL_ERROR }
+type Point { type: String!, coordinates: [Float!]! }
+type Restaurant { id: Int!, name: String!, city: String!, category: String!, status: String!, price: Int!, latitude: Float! @deprecated(reason: "Use location.coordinates"), longitude: Float!, location: Point!, slots: [Slot!]! }
+type Slot { id: ID!, restaurant_id: Int!, starts_at: String!, ends_at: String!, available: Boolean! }
+type Edge { cursor: String!, node: Restaurant! }
+type PageInfo { hasNextPage: Boolean!, endCursor: String }
+type RestaurantConnection { edges: [Edge!]!, pageInfo: PageInfo! }
+type Booking { id: Int!, slot_id: ID!, username: String! }
+type BookingResult { created: Booking! }
+type Query { restaurant(id: Int!): Restaurant!, bookings: [Booking!]!, restaurants(city: String, status: String, category: String, min_price: Float, max_price: Float, sort: String = "id", order: String = "asc", first: Int = 10, after: String): RestaurantConnection!, map(latitude: Float, longitude: Float, radius_km: Float, min_lat: Float, min_lon: Float, max_lat: Float, max_lon: Float): [Restaurant!]!, calendar(starts_at: String, ends_at: String, restaurant_id: Int): [Slot!]! }
+type Mutation { login(username: String!, password: String!): AuthPayload!, addRestaurant(input: RestaurantInput!): RestaurantResult!, updateRestaurant(id: Int!, input: RestaurantPatch!): RestaurantUpdate!, deleteRestaurant(id: Int!): Deleted!, addSlot(input: SlotInput!): SlotResult!, cancelBooking(id: Int!): Deleted!, book(slot_id: ID!): BookingResult! }
+
+input RestaurantInput { name: String!, city: String!, category: String!, status: String = "OPEN", price: Int!, latitude: Float!, longitude: Float! }
+input RestaurantPatch { name: String, city: String, category: String, status: String, price: Int, latitude: Float, longitude: Float }
+input SlotInput { restaurant_id: Int!, starts_at: String!, ends_at: String! }
+type RestaurantResult { created: Restaurant! }
+type RestaurantUpdate { updated: Restaurant! }
+type SlotResult { created: Slot! }
+type Deleted { id: Int! }
+
+"""JWT valid for one hour. Send as Authorization: Bearer TOKEN."""
+type AuthPayload { token: String!, token_type: String!, expires_in: Int! }
