@@ -1,7 +1,0 @@
-**/target/
-**/node_modules/
-**/dist/
-frontend/.env.local
-.idea/
-.vscode/
-*.log
