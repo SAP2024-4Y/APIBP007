@@ -1,0 +1,37 @@
+{
+  "team_id": "APIBP007",
+  "approach": "A",
+  "project_name": "DineIndia Restaurant Reservation API",
+  "members": [
+    {
+      "name": "Aishwarya Santhosh",
+      "roll_no": "2024SL70015",
+      "github_id": "Aicodes224",
+      "email": "2024sl70015@wilp.bits-pilani.ac.in"
+    },
+    {
+      "name": "Lakshmi Priya",
+      "roll_no": "2024SL70021",
+      "github_id": "Laksh-mi-Priya",
+      "email": "2024sl70021@wilp.bits-pilani.ac.in"
+    },
+    {
+      "name": "Veena Gishu",
+      "roll_no": "2024SL70044",
+      "github_id": "VeenaGishu",
+      "email": "2024sl70044@wilp.bits-pilani.ac.in"
+    },
+    {
+      "name": "Meghna Rajesh",
+      "roll_no": "2024SL70012",
+      "github_id": "meghnarajesh",
+      "email": "2024sl70012@wilp.bits-pilani.ac.in"
+    },
+    {
+      "name": "Sinchana V",
+      "roll_no": "2024SL70034",
+      "github_id": "sinchanapoojary-blip",
+      "email": "2024sl70034@wilp.bits-pilani.ac.in"
+    }
+  ]
+}

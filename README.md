@@ -45,7 +45,7 @@ manage dining slots through JWT-protected APIs.
 - Swagger API documentation.
 - Interactive GraphQL IDE.
 - Docker-based deployment.
-- Automated testing and GitHub Actions CI.
+- A browser interface for restaurant discovery and reservations.
 
 ## Technology Stack
 
@@ -61,7 +61,6 @@ manage dining slots through JWT-protected APIs.
 | GraphQL IDE | GraphiQL |
 | Testing | Pytest |
 | Deployment | Docker, Docker Compose |
-| CI | GitHub Actions |
 
 ## Quick start
 
@@ -75,6 +74,10 @@ docker compose up
 ```
 
 Run the command from the root directory of the APIBP007 repository.
+
+Open [http://localhost:8080](http://localhost:8080) for the DineIndia
+browser interface. Use the filters to find restaurants, sign in with the
+demo customer credentials, and view available dining times.
 
 ## Demo credentials
 
@@ -166,14 +169,15 @@ POST /graphql
 | book | Customer |
 | cancelBooking | Customer |
 
-## Run tests
+## Compare response sizes
 
 ```bash
-docker compose exec app python -m pytest -q
+docker compose exec app python tests/measure.py
 ```
 
-Ensure that the application container is running before executing
-the test command.
+Run this while the app container is active. The script compares the
+response body sizes for sample REST and GraphQL requests; it is a small
+measurement utility, not an automated test suite.
 
 ## Sample REST call
 
@@ -262,19 +266,14 @@ errors[].extensions.code.
 
 ```text
 APIBP007/
-├── .github/
-│   └── workflows/
-│       └── ci.yml
 ├── docs/
 │   ├── openapi.yaml
 │   ├── schema.graphql
-│   ├── ADR.md
-│   └── TESTING.md
+│   └── ADR.md
 ├── src/
 │   ├── main.py
 │   └── index.html
 ├── tests/
-│   ├── test_api.py
 │   └── measure.py
 ├── .gitignore
 ├── Dockerfile
@@ -289,4 +288,3 @@ APIBP007/
 - [REST API Specification](docs/openapi.yaml)
 - [GraphQL Schema](docs/schema.graphql)
 - [Architecture Decision Record](docs/ADR.md)
-- [API Testing Guide](docs/TESTING.md)
