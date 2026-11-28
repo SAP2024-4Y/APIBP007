@@ -1,0 +1,15 @@
+name: CI
+on: [pull_request, push]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - run: python -m compileall src
+      - run: ruff check --select F821,F822,F823 src tests
+      - run: python -m pytest -q
+      - run: docker compose build
